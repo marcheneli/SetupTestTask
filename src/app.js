@@ -8,8 +8,6 @@ var slidesPerPage = 2;
 
 var carousel = new Carousel({ id: "carousel", isPaging: true, slidesPerPage: slidesPerPage, isCycled: true, isAutoplayble: false });
 
-leftArrow.style.cursor = 'not-allowed';
-
 leftArrow.addEventListener("click", function() {
     carousel.prev();
 });
@@ -19,6 +17,9 @@ rightArrow.addEventListener("click", function() {
 });
 
 /*
+
+leftArrow.style.cursor = 'not-allowed';
+
 carousel.addOnSlidesChangedListener(function() {
     if(carousel.getCurrent() !== 1){
         leftArrow.style.cursor = 'pointer';

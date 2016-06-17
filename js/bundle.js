@@ -67,8 +67,6 @@
 
 	var carousel = new _carousel2.default({ id: "carousel", isPaging: true, slidesPerPage: slidesPerPage, isCycled: true, isAutoplayble: false });
 
-	leftArrow.style.cursor = 'not-allowed';
-
 	leftArrow.addEventListener("click", function () {
 	    carousel.prev();
 	});
@@ -78,6 +76,9 @@
 	});
 
 	/*
+
+	leftArrow.style.cursor = 'not-allowed';
+
 	carousel.addOnSlidesChangedListener(function() {
 	    if(carousel.getCurrent() !== 1){
 	        leftArrow.style.cursor = 'pointer';
@@ -141,7 +142,6 @@
 	                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
 	                    setTransition();
 	                    currentPage = pageAmount - 1;
-	                    updatePagination();
 	                }
 
 	                if (currentPage === pageAmount) {
@@ -149,14 +149,16 @@
 	                    carousel.style.left = pageToPosition(0) + 'px';
 	                    setTransition();
 	                    currentPage = 0;
-	                    updatePagination();
 	                }
 	            });
 	        }
 
 	        setWidthOfSlides();
 
-	        if (isPaging) pagination = addPagination();
+	        if (isPaging) {
+	            pagination = addPagination();
+	            updatePagination();
+	        }
 
 	        if (isAutoplayble) autoplay();
 
@@ -200,16 +202,7 @@
 
 	            indicator.setAttribute('data-page', i);
 
-	            setPageIndicatorMode(indicator);
-
-	            indicator.addEventListener('click', function (e) {
-	                var page = e.target.getAttribute('data-page');
-	                carousel.style.left = pageToPosition(page) + 'px';
-	                currentPage = page;
-	                inTransition = true;
-	                updatePagination();
-	                onSlidesChanged();
-	            });
+	            indicator.addEventListener('click', pageIndicatorClickHandler);
 
 	            pagination.appendChild(indicator);
 	        }
@@ -219,20 +212,30 @@
 	        return pagination;
 	    }
 
+	    function pageIndicatorClickHandler(e) {
+	        var page = e.target.getAttribute('data-page');
+	        carousel.style.left = pageToPosition(page) + 'px';
+	        currentPage = page;
+	        inTransition = true;
+	        updatePagination();
+	        onSlidesChanged();
+	    }
+
 	    function updatePagination() {
 	        var indicators = pagination.childNodes;
+	        var activePage = currentPage;
+
+	        if (currentPage === -1) activePage = pageAmount - 1;
+	        if (currentPage === pageAmount) activePage = 0;
 
 	        for (var i = 0; i < indicators.length; i++) {
 	            var indicator = indicators[i];
-	            setPageIndicatorMode(indicator);
-	        }
-	    }
 
-	    function setPageIndicatorMode(indicator) {
-	        if (indicator.getAttribute('data-page') == currentPage) {
-	            indicator.classList.add("carousel-page-indicator-active");
-	        } else {
-	            indicator.classList.remove("carousel-page-indicator-active");
+	            if (indicator.getAttribute('data-page') == activePage) {
+	                indicator.classList.add("carousel-page-indicator-active");
+	            } else {
+	                indicator.classList.remove("carousel-page-indicator-active");
+	            }
 	        }
 	    }
 

@@ -26,8 +26,6 @@ function Carousel(options){
             copySlidesForCycling();
             carousel.style.left = pageToPosition(currentPage) + 'px';
 
-            
-
             carousel.addEventListener('transitionend', function() {
                 inTransition = false;
                 
@@ -36,7 +34,6 @@ function Carousel(options){
                     carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
                     setTransition()  
                     currentPage = pageAmount - 1;
-                    updatePagination();
                 }
 
                 if(currentPage === pageAmount){
@@ -44,7 +41,6 @@ function Carousel(options){
                     carousel.style.left = pageToPosition(0) + 'px';
                     setTransition()
                     currentPage = 0;
-                    updatePagination();
                 }
 
             });
@@ -52,7 +48,10 @@ function Carousel(options){
 
         setWidthOfSlides();
 
-        if(isPaging) pagination = addPagination();
+        if(isPaging) {
+            pagination = addPagination();
+            updatePagination();
+        }
 
         if(isAutoplayble) autoplay();
 
@@ -97,16 +96,7 @@ function Carousel(options){
 
             indicator.setAttribute('data-page', i);
 
-            setPageIndicatorMode(indicator);
-
-            indicator.addEventListener('click', function(e) {
-                var page = e.target.getAttribute('data-page');
-                carousel.style.left = pageToPosition(page) + 'px';
-                currentPage = page;
-                inTransition = true;
-                updatePagination();
-                onSlidesChanged();
-            });
+            indicator.addEventListener('click', pageIndicatorClickHandler);
 
             pagination.appendChild(indicator);
         }
@@ -116,20 +106,30 @@ function Carousel(options){
         return pagination;
     }
 
+    function pageIndicatorClickHandler(e){
+        var page = e.target.getAttribute('data-page');
+        carousel.style.left = pageToPosition(page) + 'px';
+        currentPage = page;
+        inTransition = true;
+        updatePagination();
+        onSlidesChanged();
+    }
+
     function updatePagination(){
         var indicators = pagination.childNodes;
+        var activePage = currentPage;
+
+        if(currentPage === -1) activePage = pageAmount - 1;
+        if(currentPage === pageAmount) activePage = 0;
 
         for(var i = 0; i < indicators.length; i++){
             var indicator = indicators[i];
-            setPageIndicatorMode(indicator);
-        }
-    }
 
-    function setPageIndicatorMode(indicator){
-        if(indicator.getAttribute('data-page') == currentPage){
-            indicator.classList.add("carousel-page-indicator-active");
-        } else {
-            indicator.classList.remove("carousel-page-indicator-active");
+            if(indicator.getAttribute('data-page') == activePage){
+                indicator.classList.add("carousel-page-indicator-active");
+            } else {
+                indicator.classList.remove("carousel-page-indicator-active");
+            }
         }
     }
 
