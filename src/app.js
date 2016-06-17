@@ -16,6 +16,17 @@ rightArrow.addEventListener("click", function() {
     carousel.next();
 });
 
+var toggleMenu = document.getElementById("toggle-menu");
+var navBar = document.getElementById("nav-bar");
+
+toggleMenu.addEventListener("click", function(e){
+    
+    e.preventDefault();
+    e.stopPropagation();
+    navBar.classList.toggle("nav-bar-show");
+    toggleMenu.classList.toggle("on");
+});
+
 /*
 
 leftArrow.style.cursor = 'not-allowed';
