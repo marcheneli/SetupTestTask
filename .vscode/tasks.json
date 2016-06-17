@@ -1,0 +1,42 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "0.1.0",
+    "command": "gulp",
+    "isShellCommand": true,
+    "args": [
+        "--no-color"
+    ],
+    "tasks": [
+        {
+			"taskName": "scripts",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		},
+		{
+			"taskName": "sass",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		},
+		{
+			"taskName": "watch",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		},
+		{
+			"taskName": "styles",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		},
+		{
+			"taskName": "browser-sync",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		},
+		{
+			"taskName": "default",
+			"isBuildCommand": true,
+			"showOutput": "always"
+		}
+    ]
+}
