@@ -13,7 +13,7 @@ var webpackConfig = require('./webpack.config.js');
 gulp.task('browser-sync', ['styles', 'scripts'], function() {
 		browserSync.init({
 				server: {
-						baseDir: "./public"
+						baseDir: "./"
 				},
 				notify: false
 		});
@@ -27,21 +27,21 @@ gulp.task('styles', function () {
 	.pipe(rename({suffix: '.min', prefix : ''}))
 	.pipe(autoprefixer({browsers: ['last 15 versions'], cascade: false}))
 	.pipe(cleanCSS())
-	.pipe(gulp.dest('public/css'))
+	.pipe(gulp.dest('css/'))
 	.pipe(browserSync.stream());
 });
 
 gulp.task('scripts', function() {
   return gulp.src('src/app.js')
     .pipe(webpack(webpackConfig))
-    .pipe(gulp.dest('public/'));
+    .pipe(gulp.dest('js/'));
 });
 
 gulp.task('watch', function () {
 	gulp.watch('sass/*.sass', ['styles']);
 	gulp.watch('src/**/*.js', ['scripts']);
-	gulp.watch('public/*.js').on("change", browserSync.reload);
-	gulp.watch('public/*.html').on('change', browserSync.reload);
+	gulp.watch('js/*.js').on("change", browserSync.reload);
+	gulp.watch('*.html').on('change', browserSync.reload);
 });
 
 gulp.task('default', ['browser-sync', 'watch']);
