@@ -7,7 +7,9 @@ var carouselOptions = {
     isPaging: true,
     slidesPerPage: 2,
     isCycled: true,
-    isAutoplayble: false
+    isAutoplayble: true,
+    slideMargin: 21,
+    interval: 3000
 };
 
 var carousel = new Carousel(carouselOptions);
@@ -41,28 +43,20 @@ if(!carouselOptions.isCycled){
     leftArrow.style.cursor = 'not-allowed';
 
     carousel.addOnSlidesChangedListener(function() {
-        if(carousel.getCurrent() !== 1){
+        if(carousel.getCurrentPage() != 0){
             leftArrow.style.cursor = 'pointer';
         }
 
-        if(carousel.getCurrent() == 0){
+        if(carousel.getCurrentPage() == 0){
             leftArrow.style.cursor = 'not-allowed';
         }
 
-        if(carousel.getCurrent() == carousel.getPageAmount() - 1){
+        if(carousel.getCurrentPage() == carousel.getPageAmount() - 1){
             rightArrow.style.cursor = 'not-allowed';
         }
 
-        if(carousel.getCurrent() != carousel.getPageAmount() - 1){
+        if(carousel.getCurrentPage() != carousel.getPageAmount() - 1){
             rightArrow.style.cursor = 'pointer';
         }
     });
 }
-
-var navBarContainer = document.getElementById("nav-bar-container");
-
-window.addEventListener('orientationchange', function () {
-    document.body.style.display='none';
-    document.body.offsetHeight; //cause a reflow
-    document.body.style.display='block'; //cause a repaint
-});

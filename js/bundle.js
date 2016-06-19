@@ -66,7 +66,9 @@
 	    isPaging: true,
 	    slidesPerPage: 2,
 	    isCycled: true,
-	    isAutoplayble: false
+	    isAutoplayble: true,
+	    slideMargin: 21,
+	    interval: 3000
 	};
 
 	var carousel = new _carousel2.default(carouselOptions);
@@ -99,31 +101,23 @@
 	    leftArrow.style.cursor = 'not-allowed';
 
 	    carousel.addOnSlidesChangedListener(function () {
-	        if (carousel.getCurrent() !== 1) {
+	        if (carousel.getCurrentPage() != 0) {
 	            leftArrow.style.cursor = 'pointer';
 	        }
 
-	        if (carousel.getCurrent() == 0) {
+	        if (carousel.getCurrentPage() == 0) {
 	            leftArrow.style.cursor = 'not-allowed';
 	        }
 
-	        if (carousel.getCurrent() == carousel.getPageAmount() - 1) {
+	        if (carousel.getCurrentPage() == carousel.getPageAmount() - 1) {
 	            rightArrow.style.cursor = 'not-allowed';
 	        }
 
-	        if (carousel.getCurrent() != carousel.getPageAmount() - 1) {
+	        if (carousel.getCurrentPage() != carousel.getPageAmount() - 1) {
 	            rightArrow.style.cursor = 'pointer';
 	        }
 	    });
 	}
-
-	var navBarContainer = document.getElementById("nav-bar-container");
-
-	window.addEventListener('orientationchange', function () {
-	    document.body.style.display = 'none';
-	    document.body.offsetHeight; //cause a reflow
-	    document.body.style.display = 'block'; //cause a repaint
-	});
 
 /***/ },
 /* 2 */
@@ -140,6 +134,7 @@
 	    var isAutoplayble = options.isAutoplayble || false;
 	    var isCycled = options.isCycled || false;
 	    var interval = options.interval || 10000;
+	    var slideMargin = options.slideMargin;
 
 	    var slidesChengedHandlers = [];
 
@@ -149,16 +144,16 @@
 	    var pagination = null;
 
 	    var itemAmount = items.length;
-	    var pageAmount = Math.ceil(itemAmount / slidesPerPage);
+	    var pageAmount = isPaging ? Math.ceil(itemAmount / slidesPerPage) : itemAmount;
 	    var inTransition = false;
-
+	    var shift = 0;
 	    var currentPage = 0;
 
 	    init();
 
 	    function init() {
 	        if (isCycled) {
-	            addEmptySlides();
+	            if (isPaging) addEmptySlides();
 	            copySlidesForCycling();
 	            carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -188,7 +183,17 @@
 	            updatePagination();
 	        }
 
-	        if (isAutoplayble) autoplay();
+	        if (isAutoplayble) {
+	            var intervalId = isCycled ? cycledAutoplay() : nonCycledAutoplay();
+
+	            var onContainerClick = function onContainerClick(event) {
+	                clearInterval(intervalId);
+
+	                container.removeEventListener("click", onContainerClick, false);
+	            };
+
+	            container.addEventListener("click", onContainerClick, false);
+	        }
 
 	        window.addEventListener("resize", function () {
 	            setWidthOfSlides();
@@ -196,25 +201,25 @@
 	    }
 
 	    function pageToPosition(pageNumber) {
-	        return -(pageNumber * (carousel.offsetWidth + 42) + (isCycled ? carousel.offsetWidth + 63 : 21));
+	        return -(pageNumber * shift + (isCycled ? carousel.offsetWidth + 3 * slideMargin : slideMargin));
 	    }
 
 	    function next() {
 	        if (isCycled || currentPage != pageAmount - 1) {
-	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) - (carousel.offsetWidth + 42) + 'px';
+	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) - shift + 'px';
 	            inTransition = true;
 	            currentPage++;
-	            updatePagination();
+	            if (isPaging) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
 
 	    function prev() {
 	        if (isCycled || currentPage != 0) {
-	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) + (carousel.offsetWidth + 42) + 'px';
+	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) + shift + 'px';
 	            inTransition = true;
 	            currentPage--;
-	            updatePagination();
+	            if (isPaging) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
@@ -245,7 +250,9 @@
 	        carousel.style.left = pageToPosition(page) + 'px';
 	        currentPage = page;
 	        inTransition = true;
+
 	        updatePagination();
+
 	        onSlidesChanged();
 	    }
 
@@ -267,8 +274,32 @@
 	        }
 	    }
 
-	    function autoplay() {
-	        setInterval(function () {
+	    function updateShift() {
+	        shift = (isPaging ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
+	    }
+
+	    function nonCycledAutoplay() {
+	        var isNext = true;
+
+	        return setInterval(function () {
+	            if (currentPage === 0 && !isNext) {
+	                isNext = true;
+	            }
+
+	            if (currentPage === pageAmount - 1 && isNext) {
+	                isNext = false;
+	            }
+
+	            if (isNext) {
+	                next();
+	            } else {
+	                prev();
+	            }
+	        }, interval);
+	    }
+
+	    function cycledAutoplay() {
+	        return setInterval(function () {
 	            next();
 	        }, interval);
 	    }
@@ -303,11 +334,13 @@
 	        }
 
 	        var slides = carousel.querySelectorAll('.carousel-item');
-	        var slideWidth = (container.offsetWidth - (slidesPerPage - 1) * 42) / slidesPerPage;
+	        var slideWidth = (container.offsetWidth - (slidesPerPage - 1) * 2 * slideMargin) / slidesPerPage;
 
 	        for (var i = 0; i < slides.length; i++) {
 	            slides.item(i).style.width = slideWidth + 'px';
 	        }
+
+	        updateShift();
 
 	        carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -347,7 +380,7 @@
 
 	    this.next = next;
 	    this.prev = prev;
-	    this.getcurrentPage = getcurrentPage;
+	    this.getCurrentPage = getcurrentPage;
 	    this.getPageAmount = getPageAmount;
 	    this.addOnSlidesChangedListener = addOnSlidesChangedListener;
 	}
