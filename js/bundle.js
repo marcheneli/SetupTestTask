@@ -122,7 +122,6 @@
 	window.addEventListener('orientationchange', function () {
 	    document.body.style.display = 'none';
 	    document.body.offsetHeight; //cause a reflow
-	    navBarContainer.style.width = document.body.width;
 	    document.body.style.display = 'block'; //cause a repaint
 	});
 
