@@ -4,11 +4,12 @@
 
 body
     font-size: 16px
-    min-width: 320px
     margin: 0
     -webkit-backface-visibility: hidden
+    padding: 0
     height: 100%
-    padding: 0 50px
+    position: relative
+    overflow: auto
 
 html
     height: 100%
@@ -20,7 +21,9 @@ html
     width: 100%
     background-color: black
     z-index: 1051
+    padding-left: 0
     -webkit-backface-visibility: hidden
+    -webkit-transform: translateZ(0)
 
 .nav-bar
     max-width: 924px
@@ -111,30 +114,28 @@ html
     margin-left: auto
     margin-right: auto
 
-.background
-    height: 100%
-    position: fixed
-    top: 0
-    left: 0
-    width: 100%
-    background: linear-gradient(#ffaf4b, #ff920a)
-    -webkit-backface-visibility: hidden
-
 .container
-    max-width: 924px
+    min-height: 100%
+    background: linear-gradient(#ffaf4b, #ff920a)
+    position: relative
+
+.content-container
+    max-width: 1024px
     margin-left: auto
     margin-right: auto
-    min-height: 100%
-    background-color: transparent
-    position: relative
+    padding-top: 40px
+    padding-bottom: 83px
+
+.content-container-big-padding
+    padding-top: 200px
+
+.content-wrapper
+    margin: 0 50px
 
 .container-wrapper
     max-width: 924px
     position: relative
     background-color: transparent
-
-.fake-top
-    height: 40px
 
 .logo 
     width: 364px
@@ -178,7 +179,7 @@ html
 
 .carousel-arrow
     position: absolute
-    font-size: 40px
+    font-size: em(40px)
     font-family: PTSans, Helvetica, sans-serif
     cursor: pointer
     color: white
@@ -186,7 +187,6 @@ html
 
 .carousel-left-arrow 
     left: -40px
-
 
 .carousel-right-arrow
     right: -40px
@@ -248,6 +248,7 @@ html
     line-height: 0.9
     font-weight: normal !important
     font-style: normal !important
+    font-variant: small-caps
     font-family: Mosaicleaf, Helvetica, sans-serif
 
 .carousel-item-main-about 
@@ -330,12 +331,14 @@ html
     border-top-left-radius: $panelRadius
     border-top-right-radius: $panelRadius
 
-.footer-wrap 
+.footer-container 
     position: absolute
     width: 100%
-    background-color: black
-    border-radius: 7px
     bottom: 40px
+
+.footer-wrapper
+    max-width: 1024px
+    margin: 0 auto
 
 .footer
     font-size: em(14px)
@@ -343,10 +346,9 @@ html
     color: white
     text-align: right
     padding: 14px 28px
-
-.fake-bottom
-    height: 83px
-
+    background-color: black
+    border-radius: 7px
+    margin: 0 50px
 
 @import "_media.sass"
 
