@@ -6,7 +6,7 @@ var carouselOptions = {
     id: "carousel",
     isPaging: true,
     slidesPerPage: 3,
-    isCycled: false,
+    isCycled: true,
     isAutoplayble: true,
     slideMargin: 21,
     interval: 3000

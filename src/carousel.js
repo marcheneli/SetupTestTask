@@ -71,7 +71,6 @@ function Carousel(options){
          }
 
         window.addEventListener("resize", function() {
-            console.log(inTransition);
             setWidthOfSlides();
         });
     }    

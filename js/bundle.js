@@ -65,7 +65,7 @@
 	    id: "carousel",
 	    isPaging: true,
 	    slidesPerPage: 3,
-	    isCycled: false,
+	    isCycled: true,
 	    isAutoplayble: true,
 	    slideMargin: 21,
 	    interval: 3000
@@ -202,7 +202,6 @@
 	        }
 
 	        window.addEventListener("resize", function () {
-	            console.log(inTransition);
 	            setWidthOfSlides();
 	        });
 	    }
