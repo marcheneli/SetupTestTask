@@ -9,7 +9,7 @@ var carouselOptions = {
     isCycled: true,
     isAutoplayble: true,
     slideMargin: 21,
-    interval: 3000
+    interval: 4000
 };
 
 var carousel = new Carousel(carouselOptions);

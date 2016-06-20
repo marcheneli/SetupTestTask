@@ -68,7 +68,7 @@
 	    isCycled: true,
 	    isAutoplayble: true,
 	    slideMargin: 21,
-	    interval: 3000
+	    interval: 4000
 	};
 
 	var carousel = new _carousel2.default(carouselOptions);
@@ -162,18 +162,16 @@
 	            carousel.addEventListener('transitionend', function () {
 	                inTransition = false;
 
-	                if (currentPage === -1) {
-	                    unsetTransition();
-	                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
-	                    setTransition();
-	                    currentPage = pageAmount - 1;
-	                }
-
-	                if (currentPage === pageAmount) {
+	                if (currentPage === 0) {
 	                    unsetTransition();
 	                    carousel.style.left = pageToPosition(0) + 'px';
 	                    setTransition();
-	                    currentPage = 0;
+	                }
+
+	                if (currentPage === pageAmount - 1) {
+	                    unsetTransition();
+	                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
+	                    setTransition();
 	                }
 	            });
 	        } else {
@@ -214,6 +212,11 @@
 	        if (isCycled || currentPage != pageAmount - 1) {
 	            currentPage++;
 	            carousel.style.left = pageToPosition(currentPage) + 'px';
+
+	            if (isCycled && currentPage === pageAmount) {
+	                currentPage = 0;
+	            }
+
 	            inTransition = true;
 	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();
@@ -224,6 +227,11 @@
 	        if (isCycled || currentPage != 0) {
 	            currentPage--;
 	            carousel.style.left = pageToPosition(currentPage) + 'px';
+
+	            if (isCycled && currentPage === -1) {
+	                currentPage = pageAmount - 1;
+	            }
+
 	            inTransition = true;
 	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();

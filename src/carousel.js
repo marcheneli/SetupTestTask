@@ -31,18 +31,16 @@ function Carousel(options){
             carousel.addEventListener('transitionend', function() {
                 inTransition = false;
                 
-                if(currentPage === -1){
-                    unsetTransition()
-                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
-                    setTransition()  
-                    currentPage = pageAmount - 1;
+                if(currentPage === 0){
+                    unsetTransition();
+                    carousel.style.left = pageToPosition(0) + 'px';
+                    setTransition();
                 }
 
-                if(currentPage === pageAmount){
-                    unsetTransition()
-                    carousel.style.left = pageToPosition(0) + 'px';
-                    setTransition()
-                    currentPage = 0;
+                if(currentPage === pageAmount - 1){
+                    unsetTransition();
+                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
+                    setTransition();
                 }
             });
         } else {
@@ -83,6 +81,11 @@ function Carousel(options){
         if(isCycled || currentPage != pageAmount - 1){
             currentPage++;
             carousel.style.left = pageToPosition(currentPage) + 'px';
+
+            if(isCycled && currentPage === pageAmount){
+                currentPage = 0;
+            }
+
             inTransition = true;
             if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
@@ -93,6 +96,11 @@ function Carousel(options){
         if(isCycled || currentPage != 0){
             currentPage--;
             carousel.style.left = pageToPosition(currentPage) + 'px';
+
+            if(isCycled && currentPage === -1){
+                currentPage = pageAmount - 1;
+            }
+
             inTransition = true;
             if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
