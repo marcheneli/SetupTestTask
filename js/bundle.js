@@ -64,7 +64,7 @@
 	var carouselOptions = {
 	    id: "carousel",
 	    isPaging: true,
-	    slidesPerPage: 2,
+	    slidesPerPage: 3,
 	    isCycled: false,
 	    isAutoplayble: true,
 	    slideMargin: 21,
