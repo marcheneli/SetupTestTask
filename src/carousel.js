@@ -23,7 +23,8 @@ function Carousel(options){
 
     function init(){
         if(isCycled) {
-            if(isPaging) addEmptySlides();
+            if(isPaging && pageAmount > 1) addEmptySlides();
+
             copySlidesForCycling();
             carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -43,13 +44,16 @@ function Carousel(options){
                     setTransition()
                     currentPage = 0;
                 }
-
+            });
+        } else {
+            carousel.addEventListener('transitionend', function() {
+                inTransition = false;
             });
         }
 
         setWidthOfSlides();
 
-        if(isPaging) {
+        if(isPaging && pageAmount > 1) {
             pagination = addPagination();
             updatePagination();
         }
@@ -67,6 +71,7 @@ function Carousel(options){
          }
 
         window.addEventListener("resize", function() {
+            console.log(inTransition);
             setWidthOfSlides();
         });
     }    
@@ -80,7 +85,7 @@ function Carousel(options){
             carousel.style.left = (new Number(carousel.style.left.replace('px', '')) - shift) + 'px';
             inTransition = true;
             currentPage++;
-            if(isPaging) updatePagination();
+            if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
         }
     }
@@ -90,7 +95,7 @@ function Carousel(options){
             carousel.style.left = (new Number(carousel.style.left.replace('px', '')) + shift) + 'px';
             inTransition = true;
             currentPage--;
-            if(isPaging) updatePagination();
+            if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
         }
         
@@ -147,7 +152,7 @@ function Carousel(options){
     }
 
     function updateShift(){
-        shift = (isPaging ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
+        shift = (isPaging && pageAmount > 1 ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
     }
 
     function nonCycledAutoplay(){

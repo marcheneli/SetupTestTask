@@ -65,7 +65,7 @@
 	    id: "carousel",
 	    isPaging: true,
 	    slidesPerPage: 2,
-	    isCycled: true,
+	    isCycled: false,
 	    isAutoplayble: true,
 	    slideMargin: 21,
 	    interval: 3000
@@ -92,6 +92,7 @@
 
 	    e.preventDefault();
 	    e.stopPropagation();
+
 	    navBar.classList.toggle("nav-bar-show");
 	    content.classList.toggle("content-container-big-padding");
 	    toggleMenu.classList.toggle("on");
@@ -153,7 +154,8 @@
 
 	    function init() {
 	        if (isCycled) {
-	            if (isPaging) addEmptySlides();
+	            if (isPaging && pageAmount > 1) addEmptySlides();
+
 	            copySlidesForCycling();
 	            carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -174,11 +176,15 @@
 	                    currentPage = 0;
 	                }
 	            });
+	        } else {
+	            carousel.addEventListener('transitionend', function () {
+	                inTransition = false;
+	            });
 	        }
 
 	        setWidthOfSlides();
 
-	        if (isPaging) {
+	        if (isPaging && pageAmount > 1) {
 	            pagination = addPagination();
 	            updatePagination();
 	        }
@@ -196,6 +202,7 @@
 	        }
 
 	        window.addEventListener("resize", function () {
+	            console.log(inTransition);
 	            setWidthOfSlides();
 	        });
 	    }
@@ -209,7 +216,7 @@
 	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) - shift + 'px';
 	            inTransition = true;
 	            currentPage++;
-	            if (isPaging) updatePagination();
+	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
@@ -219,7 +226,7 @@
 	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) + shift + 'px';
 	            inTransition = true;
 	            currentPage--;
-	            if (isPaging) updatePagination();
+	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
@@ -275,7 +282,7 @@
 	    }
 
 	    function updateShift() {
-	        shift = (isPaging ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
+	        shift = (isPaging && pageAmount > 1 ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
 	    }
 
 	    function nonCycledAutoplay() {
