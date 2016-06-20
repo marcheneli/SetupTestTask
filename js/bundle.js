@@ -51,7 +51,7 @@
 /* 1 */
 /***/ function(module, exports, __webpack_require__) {
 
-	'use strict';
+	"use strict";
 
 	var _carousel = __webpack_require__(2);
 
@@ -60,14 +60,21 @@
 	function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
 
 	var container = document.getElementById("carousel");
+
+	var carouselOptions = {
+	    id: "carousel",
+	    isPaging: true,
+	    slidesPerPage: 3,
+	    isCycled: true,
+	    isAutoplayble: true,
+	    slideMargin: 21,
+	    interval: 3000
+	};
+
+	var carousel = new _carousel2.default(carouselOptions);
+
 	var leftArrow = container.querySelector('.carousel-left-arrow');
 	var rightArrow = container.querySelector('.carousel-right-arrow');
-
-	var slidesPerPage = 2;
-
-	var carousel = new _carousel2.default({ id: "carousel", isPaging: true, slidesPerPage: slidesPerPage, isCycled: true, isAutoplayble: false });
-
-	leftArrow.style.cursor = 'not-allowed';
 
 	leftArrow.addEventListener("click", function () {
 	    carousel.prev();
@@ -77,24 +84,41 @@
 	    carousel.next();
 	});
 
-	/*
-	carousel.addOnSlidesChangedListener(function() {
-	    if(carousel.getCurrent() !== 1){
-	        leftArrow.style.cursor = 'pointer';
-	    }
+	var toggleMenu = document.getElementById("toggle-menu");
+	var navBar = document.getElementById("nav-bar");
+	var content = document.getElementById("content");
 
-	    if(carousel.getCurrent() == 0){
-	        leftArrow.style.cursor = 'not-allowed';
-	    }
+	toggleMenu.addEventListener("click", function (e) {
 
-	    if(carousel.getCurrent() == carousel.getPageAmount() - 1){
-	        rightArrow.style.cursor = 'not-allowed';
-	    }
+	    e.preventDefault();
+	    e.stopPropagation();
 
-	    if(carousel.getCurrent() != carousel.getPageAmount() - 1){
-	        rightArrow.style.cursor = 'pointer';
-	    }
-	});*/
+	    navBar.classList.toggle("nav-bar-show");
+	    content.classList.toggle("content-container-big-padding");
+	    toggleMenu.classList.toggle("on");
+	});
+
+	if (!carouselOptions.isCycled) {
+	    leftArrow.style.cursor = 'not-allowed';
+
+	    carousel.addOnSlidesChangedListener(function () {
+	        if (carousel.getCurrentPage() != 0) {
+	            leftArrow.style.cursor = 'pointer';
+	        }
+
+	        if (carousel.getCurrentPage() == 0) {
+	            leftArrow.style.cursor = 'not-allowed';
+	        }
+
+	        if (carousel.getCurrentPage() == carousel.getPageAmount() - 1) {
+	            rightArrow.style.cursor = 'not-allowed';
+	        }
+
+	        if (carousel.getCurrentPage() != carousel.getPageAmount() - 1) {
+	            rightArrow.style.cursor = 'pointer';
+	        }
+	    });
+	}
 
 /***/ },
 /* 2 */
@@ -111,6 +135,7 @@
 	    var isAutoplayble = options.isAutoplayble || false;
 	    var isCycled = options.isCycled || false;
 	    var interval = options.interval || 10000;
+	    var slideMargin = options.slideMargin;
 
 	    var slidesChengedHandlers = [];
 
@@ -120,16 +145,17 @@
 	    var pagination = null;
 
 	    var itemAmount = items.length;
-	    var pageAmount = Math.ceil(itemAmount / slidesPerPage);
+	    var pageAmount = isPaging ? Math.ceil(itemAmount / slidesPerPage) : itemAmount;
 	    var inTransition = false;
-
+	    var shift = 0;
 	    var currentPage = 0;
 
 	    init();
 
 	    function init() {
 	        if (isCycled) {
-	            addEmptySlides();
+	            if (isPaging && pageAmount > 1) addEmptySlides();
+
 	            copySlidesForCycling();
 	            carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -141,7 +167,6 @@
 	                    carousel.style.left = pageToPosition(pageAmount - 1) + 'px';
 	                    setTransition();
 	                    currentPage = pageAmount - 1;
-	                    updatePagination();
 	                }
 
 	                if (currentPage === pageAmount) {
@@ -149,16 +174,32 @@
 	                    carousel.style.left = pageToPosition(0) + 'px';
 	                    setTransition();
 	                    currentPage = 0;
-	                    updatePagination();
 	                }
+	            });
+	        } else {
+	            carousel.addEventListener('transitionend', function () {
+	                inTransition = false;
 	            });
 	        }
 
 	        setWidthOfSlides();
 
-	        if (isPaging) pagination = addPagination();
+	        if (isPaging && pageAmount > 1) {
+	            pagination = addPagination();
+	            updatePagination();
+	        }
 
-	        if (isAutoplayble) autoplay();
+	        if (isAutoplayble) {
+	            var intervalId = isCycled ? cycledAutoplay() : nonCycledAutoplay();
+
+	            var onContainerClick = function onContainerClick(event) {
+	                clearInterval(intervalId);
+
+	                container.removeEventListener("click", onContainerClick, false);
+	            };
+
+	            container.addEventListener("click", onContainerClick, false);
+	        }
 
 	        window.addEventListener("resize", function () {
 	            setWidthOfSlides();
@@ -166,25 +207,25 @@
 	    }
 
 	    function pageToPosition(pageNumber) {
-	        return -(pageNumber * (carousel.offsetWidth + 42) + (isCycled ? carousel.offsetWidth + 63 : 21));
+	        return -(pageNumber * shift + (isCycled ? carousel.offsetWidth + 3 * slideMargin : slideMargin));
 	    }
 
 	    function next() {
 	        if (isCycled || currentPage != pageAmount - 1) {
-	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) - (carousel.offsetWidth + 42) + 'px';
+	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) - shift + 'px';
 	            inTransition = true;
 	            currentPage++;
-	            updatePagination();
+	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
 
 	    function prev() {
 	        if (isCycled || currentPage != 0) {
-	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) + (carousel.offsetWidth + 42) + 'px';
+	            carousel.style.left = new Number(carousel.style.left.replace('px', '')) + shift + 'px';
 	            inTransition = true;
 	            currentPage--;
-	            updatePagination();
+	            if (isPaging && pageAmount > 1) updatePagination();
 	            onSlidesChanged();
 	        }
 	    }
@@ -200,16 +241,7 @@
 
 	            indicator.setAttribute('data-page', i);
 
-	            setPageIndicatorMode(indicator);
-
-	            indicator.addEventListener('click', function (e) {
-	                var page = e.target.getAttribute('data-page');
-	                carousel.style.left = pageToPosition(page) + 'px';
-	                currentPage = page;
-	                inTransition = true;
-	                updatePagination();
-	                onSlidesChanged();
-	            });
+	            indicator.addEventListener('click', pageIndicatorClickHandler);
 
 	            pagination.appendChild(indicator);
 	        }
@@ -219,25 +251,61 @@
 	        return pagination;
 	    }
 
+	    function pageIndicatorClickHandler(e) {
+	        var page = e.target.getAttribute('data-page');
+	        carousel.style.left = pageToPosition(page) + 'px';
+	        currentPage = page;
+	        inTransition = true;
+
+	        updatePagination();
+
+	        onSlidesChanged();
+	    }
+
 	    function updatePagination() {
 	        var indicators = pagination.childNodes;
+	        var activePage = currentPage;
+
+	        if (currentPage === -1) activePage = pageAmount - 1;
+	        if (currentPage === pageAmount) activePage = 0;
 
 	        for (var i = 0; i < indicators.length; i++) {
 	            var indicator = indicators[i];
-	            setPageIndicatorMode(indicator);
+
+	            if (indicator.getAttribute('data-page') == activePage) {
+	                indicator.classList.add("carousel-page-indicator-active");
+	            } else {
+	                indicator.classList.remove("carousel-page-indicator-active");
+	            }
 	        }
 	    }
 
-	    function setPageIndicatorMode(indicator) {
-	        if (indicator.getAttribute('data-page') == currentPage) {
-	            indicator.classList.add("carousel-page-indicator-active");
-	        } else {
-	            indicator.classList.remove("carousel-page-indicator-active");
-	        }
+	    function updateShift() {
+	        shift = (isPaging && pageAmount > 1 ? carousel.offsetWidth : items[0].offsetWidth) + 2 * slideMargin;
 	    }
 
-	    function autoplay() {
-	        setInterval(function () {
+	    function nonCycledAutoplay() {
+	        var isNext = true;
+
+	        return setInterval(function () {
+	            if (currentPage === 0 && !isNext) {
+	                isNext = true;
+	            }
+
+	            if (currentPage === pageAmount - 1 && isNext) {
+	                isNext = false;
+	            }
+
+	            if (isNext) {
+	                next();
+	            } else {
+	                prev();
+	            }
+	        }, interval);
+	    }
+
+	    function cycledAutoplay() {
+	        return setInterval(function () {
 	            next();
 	        }, interval);
 	    }
@@ -272,11 +340,13 @@
 	        }
 
 	        var slides = carousel.querySelectorAll('.carousel-item');
-	        var slideWidth = (container.offsetWidth - (slidesPerPage - 1) * 42) / slidesPerPage;
+	        var slideWidth = (container.offsetWidth - (slidesPerPage - 1) * 2 * slideMargin) / slidesPerPage;
 
 	        for (var i = 0; i < slides.length; i++) {
 	            slides.item(i).style.width = slideWidth + 'px';
 	        }
+
+	        updateShift();
 
 	        carousel.style.left = pageToPosition(currentPage) + 'px';
 
@@ -316,7 +386,7 @@
 
 	    this.next = next;
 	    this.prev = prev;
-	    this.getcurrentPage = getcurrentPage;
+	    this.getCurrentPage = getcurrentPage;
 	    this.getPageAmount = getPageAmount;
 	    this.addOnSlidesChangedListener = addOnSlidesChangedListener;
 	}

@@ -1,59 +1,20 @@
 @import "bourbon"
 
-/*==========  Desktop First Method  ==========*/
-
-/* Large Devices, Wide Screens */
-@media only screen and (max-width : 1200px)
-	/**/
-
-
-/* Medium Devices, Desktops */
-@media only screen and (max-width : 992px)
-	/**/
-
-
-/* Small Devices, Tablets */
 @media only screen and (max-width : 768px)
-	/**/
+    .nav-bar-middle-section
+        width: 300px
 
+    .logo
+        width: 300px
+        height: 200px
+        background-size: 300px 200px
+        h1
+            padding-top: 40px
+            font-size: em(62px)
+        h2
+            padding-top: 12px
+            font-size: em(14px)
 
-/* Extra Small Devices, Phones */
-@media only screen and (max-width : 480px)
-	/**/
-
-
-/* Custom, iPhone Retina */
-@media only screen and (max-width : 320px)
-	/**/
-
-
-/*==========  Mobile First Method  ==========*/
-
-/* Custom, iPhone Retina */
-@media only screen and (min-width : 320px)
-	/**/
-
-
-/* Extra Small Devices, Phones */
-@media only screen and (min-width : 480px)
-	/**/
-
-
-/* Small Devices, Tablets */
-@media only screen and (min-width : 768px)
-	/**/
-
-
-/* Medium Devices, Desktops */
-@media only screen and (min-width : 992px)
-	/**/
-
-
-/* Large Devices, Wide Screens */
-@media only screen and (min-width : 1200px)
-	/**/
-
-@media only screen and (max-width: 800px)
     .info-wrap
         width: 100%
 
@@ -69,3 +30,130 @@
 
     .info
         margin-right: 0
+    
+    .carousel-arrow
+        top: 35px
+    
+    .carousel-left-arrow 
+        left: -35px
+
+    .carousel-right-arrow
+        right: -35px
+    
+    .carousel-item-main 
+        font-size: em(120px)
+
+    .carousel-item-title
+        font-size: em(20px)
+
+@media only screen and (max-width : 540px)
+    .logo
+        width: 250px
+        height: 180px
+        background-size: 250px 180px
+        h1
+            padding-top: 35px
+            font-size: em(56px)
+        h2
+            padding-top: 10px
+            font-size: em(12px)
+    
+    .carousel-item-main 
+        font-size: em(80px)
+
+    .carousel-item-title
+        font-size: em(16px)
+
+    .toggle-menu-container
+        display: block
+
+    .nav-bar
+        width: 100%
+        position: relative
+        margin: 0
+        display: none
+        ul 
+            list-style-type: none
+            margin: 0
+            padding: 0
+            overflow: hidden
+            background-color: black
+        li
+            float: none
+            width: 100%
+            text-align: center
+            a 
+                display: block
+                color: white
+                text-align: center
+                padding: 12px 16px
+                text-decoration: none
+                font-size: em(14px)
+                font-family: Arial, Helvetica, sans-serif
+
+        li:first-child
+            text-align: center
+        li:last-child
+            text-align: center
+
+    .nav-bar-right-section 
+        color: white
+        position: relative
+
+
+    .nav-bar-middle-section 
+        width: 100%
+        color: white
+        margin-left: 0
+        margin-right: 0
+
+@media only screen and (max-width : 480px)
+    .carousel-arrow
+        font-size: em(35px)
+        top: 14px
+    
+    .carousel-left-arrow 
+        left: -35px
+
+    .carousel-right-arrow
+        right: -35px
+
+    .carousel-item-main 
+        font-size: em(70px)
+
+    .carousel-item-title
+        font-size: em(15px)
+
+@media only screen and (max-width : 320px)
+    .carousel-arrow
+        font-size: em(25px)
+        top: 12px
+
+    .content-wrapper
+        margin: 0 30px
+
+    .carousel-left-arrow 
+        left: -22px
+
+    .carousel-right-arrow
+        right: -22px
+
+    .logo
+        width: 220px
+        height: 130px
+        background-size: 220px 130px
+        h1
+            padding-top: 22px
+            font-size: em(42px)
+        h2
+            padding-top: 8px
+            font-size: em(10px)
+    .footer
+        margin: 0 30px
+
+    .carousel-item-main 
+        font-size: em(50px)
+
+    .carousel-item-title
+        font-size: em(12px)
+
