@@ -81,9 +81,9 @@ function Carousel(options){
 
     function next(){
         if(isCycled || currentPage != pageAmount - 1){
-            carousel.style.left = (new Number(carousel.style.left.replace('px', '')) - shift) + 'px';
-            inTransition = true;
             currentPage++;
+            carousel.style.left = pageToPosition(currentPage) + 'px';
+            inTransition = true;
             if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
         }
@@ -91,9 +91,9 @@ function Carousel(options){
 
     function prev(){
         if(isCycled || currentPage != 0){
-            carousel.style.left = (new Number(carousel.style.left.replace('px', '')) + shift) + 'px';
-            inTransition = true;
             currentPage--;
+            carousel.style.left = pageToPosition(currentPage) + 'px';
+            inTransition = true;
             if(isPaging && pageAmount > 1) updatePagination();
             onSlidesChanged();
         }
